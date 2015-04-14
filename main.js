@@ -59,7 +59,7 @@ function initialize() {
 
 // find user location with HTML5 geolocation 
 function getCurrentLocation() {
-  $('#directions').html('Getting your location...');
+  $('#progress').html('<h2>Getting your location...</h2>');
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       myLocation = new google.maps.LatLng(position.coords.latitude,
@@ -120,7 +120,7 @@ function findPlaces(location, radius, keyword) {
         default:
           coffeeShop = undefined;
           donutShop = undefined;
-          $('#directions').html('Oops! Something went wrong.');
+          $('#progress').html('Oops! Something went wrong.');
       }
 
       getDirections();
@@ -138,7 +138,7 @@ function getDirections() {
   }
 
   // update on progress
-  $('#directions').html('Calculating route...');
+  $('#progress').html('<h2>Calculating route...</h2>');
 
   // call appropriate function based on travel mode
   if (travelMode == 'TRANSIT') {
@@ -170,7 +170,7 @@ function calcRoute() {
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
-      $('#directions').html('');
+      $('#progress').html('<h2>Done! Have a nice trip.</h2>');
     }
   });
 }
@@ -211,7 +211,7 @@ function calcTransitRoute() {
               result.routes[0].legs = legs;
               result.routes[0].overview_path = overviewPath;
               directionsDisplay.setDirections(result);
-              $('#directions').html('');
+              $('#progress').html('');
             }
           });
         }
