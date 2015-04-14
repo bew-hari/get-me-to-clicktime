@@ -23,25 +23,19 @@
     <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCaj1FIu6LXQGY_l0uEKWVSGqWZHSBK7Zc"></script>
   </head>
   <body>
-  	<div id="directions" class="col-md-6" style="overflow-y:scroll">
+  	<div id="directions" class="col-md-4 col-sm-4" style="overflow-y:scroll">
 	  	
   		<div id="progress"></div>
-  		<div class="row" style="margin: 0">
-  		<ul id="mode" class="nav nav-pills">
-	  			<li class="" onclick="handleMode('WALKING')">
-	  				<a style="cursor:pointer">Walking</a>
-	  			</li>
-	  			<li class="" onclick="handleMode('BICYCLING')">
-	  				<a style="cursor:pointer">Bicycling</a>
-	  			</li>
-	  			<li class="" onclick="handleMode('TRANSIT')">
-	  				<a style="cursor:pointer">Transit</a>
-	  			</li>
+  		<div style="margin: 0">
+  			<ul id="mode" class="nav nav-pills">
+	  			<li class=""><a style="cursor:pointer">Walking</a></li>
+	  			<li class=""><a style="cursor:pointer">Bicycling</a></li>
+	  			<li class=""><a style="cursor:pointer">Transit</a></li>
 	  		</ul>
 	  	</div>
 
   	</div>
-    <div id="map-canvas" class="col-md-6"></div>
+    <div id="map-canvas" class="col-md-8 col-sm-8"></div>
 
     <script src="main.js"></script>
   </body>

@@ -63,7 +63,7 @@ function getMyLocation() {
       myLocation = new google.maps.LatLng(position.coords.latitude,
                                           position.coords.longitude);
       //travelMode = 'BICYCLING';
-      $('#progress').html('<h3>Got it! Please select travel mode.</h3>');
+      $('#progress').html('<h3>Please select travel mode.</h3>');
       map.setCenter(myLocation);
       myMarker = new google.maps.Marker({
         position: myLocation,
@@ -125,7 +125,7 @@ function findPlaces(location, radius, keyword) {
         default:
           coffeeShop = undefined;
           donutShop = undefined;
-          $('#progress').html('Oops! Something went wrong.');
+          $('#progress').html('<h3>Oops! Something went wrong.</h3>');
       }
 
 
@@ -144,7 +144,7 @@ function getDirections() {
   }
 
   // remove user location marker since directions service will add a new one
-  if (myMarker) {
+  if (!!myMarker) {
     myMarker.setMap(null);
     myMarker = undefined;
   }
@@ -224,7 +224,7 @@ function calcTransitRoute() {
               result.routes[0].legs = legs;
               result.routes[0].overview_path = overviewPath;
               directionsDisplay.setDirections(result);
-              $('#progress').html('<h3>Done! Have a nice trip<h3>');
+              $('#progress').html('<h3>Done! Have a nice trip.</h3>');
             }
           });
         }
@@ -233,9 +233,15 @@ function calcTransitRoute() {
   });
 }
 
-function handleMode(mode) {
-  travelMode = mode;
-  getDirections();
-}
-
 google.maps.event.addDomListener(window, 'load', initialize);
+
+$('#mode li').on('click', function(e) {
+  e.preventDefault();
+
+  // add/remove active class
+  $(this).parent().children().removeClass('active');
+  $(this).addClass('active'); 
+
+  travelMode = $(this).children().first().html().toUpperCase();
+  getDirections();
+});
