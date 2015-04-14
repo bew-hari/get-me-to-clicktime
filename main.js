@@ -1,7 +1,7 @@
 var map = undefined;
 var geocoder = undefined;
 var myLocation = undefined;
-//var startAddress = 'Northwestern University, Evanston, IL';//'150 West San Carlos Street, San Jose, CA 95113, United States';
+var myMarker = undefined;
 var destAddress = '282 2nd Street 4th floor, San Francisco, CA 94105';
 var destLocation = undefined;
 
@@ -16,8 +16,6 @@ function initialize() {
   // stretch map and directions div to page height
   $('#map-canvas').css('height', $(window).height());
   $('#directions').css('height', $(window).height());
-
-  var travelMode = 'DRIVING';
 
   var mapOptions = {
     // default location at NU Campus
@@ -47,24 +45,31 @@ function initialize() {
   geocoder.geocode( { 'address': destAddress}, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       destLocation = results[0].geometry.location;
-
       findPlaces(destLocation, '1000', 'coffee');
       findPlaces(destLocation, '1000', 'donuts');
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
   });
-  getCurrentLocation();
+  getMyLocation();
 }
 
-// find user location with HTML5 geolocation 
-function getCurrentLocation() {
-  $('#progress').html('<h2>Getting your location...</h2>');
+// update parameters
+function getMyLocation() {
+  // find user location with HTML5 geolocation 
+  $('#progress').html('<h3>Getting your location...</h3>');
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       myLocation = new google.maps.LatLng(position.coords.latitude,
                                           position.coords.longitude);
-
+      //travelMode = 'BICYCLING';
+      $('#progress').html('<h3>Got it! Please select travel mode.</h3>');
+      map.setCenter(myLocation);
+      myMarker = new google.maps.Marker({
+        position: myLocation,
+        map: map,
+        title: 'Me'
+      });
       getDirections();
 
     }, function() {
@@ -123,6 +128,7 @@ function findPlaces(location, radius, keyword) {
           $('#progress').html('Oops! Something went wrong.');
       }
 
+
       getDirections();
     } else {
       alert("Search returned status: " + status);
@@ -133,22 +139,29 @@ function findPlaces(location, radius, keyword) {
 
 function getDirections() {
   // not all parameters are ready
-  if (!myLocation || !coffeeShop || !donutShop) {
+  if (!myLocation || !coffeeShop || !donutShop || !travelMode) {
     return;
   }
 
+  // remove user location marker since directions service will add a new one
+  if (myMarker) {
+    myMarker.setMap(null);
+    myMarker = undefined;
+  }
+
+
   // update on progress
-  $('#progress').html('<h2>Calculating route...</h2>');
+  $('#progress').html('<h3>Calculating route...</h3>');
 
   // call appropriate function based on travel mode
   if (travelMode == 'TRANSIT') {
     calcTransitRoute();
   } else {
-    calcRoute();
+    calcRoute(travelMode);
   }
 }
 
-function calcRoute() {
+function calcRoute(travelMode) {
   // construct waypoints for request
   var waypts = [];
   waypts.push({
@@ -165,12 +178,12 @@ function calcRoute() {
       destination: destAddress,
       waypoints: waypts,
       optimizeWaypoints: true,
-      travelMode: google.maps.TravelMode.WALKING
+      travelMode: google.maps.TravelMode[travelMode]
   };
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
-      $('#progress').html('<h2>Done! Have a nice trip.</h2>');
+      $('#progress').html('<h3>Done! Have a nice trip.</h3>');
     }
   });
 }
@@ -211,13 +224,18 @@ function calcTransitRoute() {
               result.routes[0].legs = legs;
               result.routes[0].overview_path = overviewPath;
               directionsDisplay.setDirections(result);
-              $('#progress').html('');
+              $('#progress').html('<h3>Done! Have a nice trip<h3>');
             }
           });
         }
       });
     }
   });
+}
+
+function handleMode(mode) {
+  travelMode = mode;
+  getDirections();
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
