@@ -161,6 +161,7 @@ function getDirections() {
   }
 }
 
+// calculate route for WALKING and BICYCLING (waypoints allowed)
 function calcRoute(travelMode) {
   // construct waypoints for request
   var waypts = [];
@@ -235,6 +236,8 @@ function calcTransitRoute() {
 
 google.maps.event.addDomListener(window, 'load', initialize);
 
+
+// add mode select listeners
 $('#mode li').on('click', function(e) {
   e.preventDefault();
 
@@ -242,6 +245,7 @@ $('#mode li').on('click', function(e) {
   $(this).parent().children().removeClass('active');
   $(this).addClass('active'); 
 
+  // set travel mode and get directions
   travelMode = $(this).children().first().html().toUpperCase();
   getDirections();
 });
